@@ -1,0 +1,10 @@
+{
+  "type": "mysql",
+  "host": "ugcaduit-test-db.sh.hupu.com",
+  "port": 3306,
+  "username": "ugit",
+  "password": "3E2oEfVMRIwgVoE27vuO",
+  "database": "ugcaudit_log",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "synchronize": true
+}
