@@ -3,12 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection } from 'typeorm';
-import { CatModule } from './cat/module/cat.module'
+import { EventModule } from './event/module/event.module'
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
-    CatModule
+    EventModule
   ],
   controllers: [AppController],
   providers: [AppService],
