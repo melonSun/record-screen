@@ -9,9 +9,12 @@ export class EventEntity extends BaseEntity {
   @Column()
   type: number;
 
-  @Column({type: 'text' })
+  @Column({type: 'longtext' })
   data: () => {};
 
-  @Column({type: "int"})
+  @Column({type: "bigint"})
   timestamp: number;
+
+  // @Column()
+  // user: 
 }

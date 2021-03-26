@@ -16,8 +16,6 @@ export class EventController {
     const { events } = body;
     events.map(item => {
       item.data = JSON.stringify(item.data)
-      // console.log(item.data,'--------')
-      item.timestamp = Math.trunc(item.timestamp / 1000)
     })
     return events && events.length > 0 && this.eventService.create(events);
   }
