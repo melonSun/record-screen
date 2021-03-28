@@ -16,10 +16,6 @@ export class EventService{
   }
 
   async create(events: EventEntity[]): Promise<any> {
-    console.log('===------')
-    console.log(events[0])
-    console.log('===------')
-
     // return await this.eventRepository.save(events)
     return await getConnection()
     .createQueryBuilder()
