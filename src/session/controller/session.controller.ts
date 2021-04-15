@@ -7,10 +7,9 @@ import { UserService } from '../../user/service/user.service'
 @Controller('session')
 export class SessionController {
   constructor(
-    @Inject()
-    private readonly sessionService: SessionService, 
+    private readonly sessionService: SessionService,
     private readonly eventService: EventService,
-    // private readonly userService: UserService 
+    private readonly userService: UserService 
     ) {}
     
 
@@ -27,6 +26,7 @@ export class SessionController {
       item.data = JSON.stringify(item.data)
     })
     events && events.length > 0 && this.eventService.create(events);
-    return id? null: (this.sessionService.create({...others}) ) //&& this.userService.create({username, nickname}));
+    return id && this.sessionService.create({...others});
+    // return id? null: ((this.sessionService.create({...others}) ) && this.userService.create({username, nickname}));
   }
 }

@@ -16,7 +16,6 @@ export class SessionService{
   }
 
   async create(session: SessionEntity[]): Promise<any> {
-      console.log(session,'--------session')
-    // return await this.sessionRepository.save(session)
+    return await this.sessionRepository.save(session)
   }
 }
