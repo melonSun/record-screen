@@ -7,37 +7,39 @@ export class SessionEntity extends BaseEntity {
   id: number;
 
   // sesion detail
-  @Column()
+  @Column({default: ''})
   ip: string;
 
-  @Column()
+  @Column({default: ''})
   browser: string;
 
-  @Column()
+  @Column({default: ''})
   browser_version: string;
 
-  @Column()
-  language: string
-
-  @Column()
-  user_agent: string
-
-  @Column()
-  referrer: string
-
-  @Column()
-  system: string
-
-  @Column()
+  @Column({default: ''})
   browser_size: string
 
-  @Column({type: 'bigint' })
+  @Column({default: ''})
+  language: string
+
+  @Column({default: ''})
+  user_agent: string
+
+  @Column({default: ''})
+  referrer: string
+
+  @Column({default: ''})
+  system: string
+
+  @Column({type: 'longtext'})
   start_time: number;
 
-  @Column({type: 'bigint' })
+  @Column({type: 'longtext'})
   end_time: number;
 
-  @Column()
+  @Column({})
   user_id: number;
-  // location
+
+  @Column({type: 'longtext'})
+  event_ids: string
 }

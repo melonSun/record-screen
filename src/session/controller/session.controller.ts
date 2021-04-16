@@ -11,22 +11,69 @@ export class SessionController {
     private readonly eventService: EventService,
     private readonly userService: UserService 
     ) {}
-    
-
-  @Get()
-  findAll(): Promise<SessionEntity[]> {
-    return this.sessionService.findAll()
-  }
 
   @Post('/create')
-  create(@Query() query, @Body() body): Promise<any> {
+  async create(@Query() query, @Body() body): Promise<any> {
     const { events, id,  ...others } = body;
-    const { userId, username, nickname } = query;
+    const sessionId = body.id;
+    const { username, nickname } = query;
+
+    // 处理用户信息
+    let user = await this.userService.getUser(username);
+    const userId = user? user.username: await this.userService.create({username, nickname});
+
+    // 获取事件id
     events.map(item => {
       item.data = JSON.stringify(item.data)
     })
-    events && events.length > 0 && this.eventService.create(events);
-    return id && this.sessionService.create({...others});
-    // return id? null: ((this.sessionService.create({...others}) ) && this.userService.create({username, nickname}));
+    const eventRes = events && events.length > 0 && await this.eventService.create(events);
+    const { identifiers } = eventRes;
+    const eventIds = identifiers ? identifiers.map(item => item.id): [];
+
+    let res:any = {};
+    if (sessionId) {
+      const session = await this.sessionService.getSession({id: sessionId});
+      const { id, start_time, event_ids, ...defaultValues } = session;
+      if (events && events.length > 0) {
+        if (events[events.length - 1].timestamp - start_time > 1000 * 60 * 30) {
+          session['end_time'] = events[events.length - 1].timestamp
+          this.sessionService.update(id, {end_time: events[events.length - 1].timestamp});
+          res = await this.sessionService.create({
+            ...others, 
+            start_time: events && events[0].timestamp, 
+            end_time: '', 
+            event_ids: eventIds.join(','), 
+            user_id: userId 
+          });
+        } else {
+          const newSession = {
+            start_time,
+            ...defaultValues,
+            event_ids: event_ids + eventIds.join(',')
+          }
+          res = await this.sessionService.update(id, {...newSession});
+        }
+      } else {
+        res = { id }
+      }
+    } else {
+      res = await this.sessionService.create({
+        ...others, 
+        start_time: events && events[0].timestamp, 
+        end_time: '', 
+        event_ids: eventIds.join(','), 
+        user_id: userId 
+      });
+    }
+    return {
+      id: res.id
+    }
+  }
+
+
+  @Get('/get_user_session') 
+  async getUserSessions(@Body() body): Promise<any> {
+    const { username } = body;
+    return this.sessionService.getSession({user_id: username});
   }
 }

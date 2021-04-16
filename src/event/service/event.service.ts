@@ -16,14 +16,11 @@ export class EventService{
   }
 
   async create(events: EventEntity[]): Promise<any> {
-    // return await this.eventRepository.save(events)
     return await getConnection()
     .createQueryBuilder()
     .insert()
     .into(EventEntity)
     .values(events)
     .execute();
-    // return this.eventRepository.query(
-    //   `INSERT INTO syndatabase ( type, data, timestamp ) VALUES(${events.type}, ${events.data}, ${events.timestamp})`);
   }
 }

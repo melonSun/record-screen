@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 
 // 这里可以修改表名
-@Entity('syndatabase')
+@Entity('syn_event')
 export class EventEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
