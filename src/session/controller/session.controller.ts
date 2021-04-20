@@ -22,34 +22,25 @@ export class SessionController {
     let user = await this.userService.getUser(username);
     const userId = user? user.username: await this.userService.create({username, nickname});
 
-    // 获取事件id
-    events.map(item => {
-      item.data = JSON.stringify(item.data)
-    })
-    const eventRes = events && events.length > 0 && await this.eventService.create(events);
-    const { identifiers } = eventRes;
-    const eventIds = identifiers ? identifiers.map(item => item.id): [];
-
     let res:any = {};
     if (sessionId) {
       const session = await this.sessionService.getSession({id: sessionId});
-      const { id, start_time, event_ids, ...defaultValues } = session;
+      const { id, start_time, end_time, ...defaultValues } = session;
+
       if (events && events.length > 0) {
         if (events[events.length - 1].timestamp - start_time > 1000 * 60 * 30) {
-          session['end_time'] = events[events.length - 1].timestamp
-          this.sessionService.update(id, {end_time: events[events.length - 1].timestamp});
+          // this.sessionService.update(id, {end_time: events[events.length - 1].timestamp});
           res = await this.sessionService.create({
             ...others, 
-            start_time: events && events[0].timestamp, 
-            end_time: '', 
-            event_ids: eventIds.join(','), 
+            start_time: events[0].timestamp, 
+            end_time: events[events.length - 1].timestamp,
             user_id: userId 
           });
         } else {
           const newSession = {
             start_time,
-            ...defaultValues,
-            event_ids: event_ids + eventIds.join(',')
+            end_time: events[events.length - 1].timestamp, 
+            ...defaultValues
           }
           res = await this.sessionService.update(id, {...newSession});
         }
@@ -59,21 +50,49 @@ export class SessionController {
     } else {
       res = await this.sessionService.create({
         ...others, 
-        start_time: events && events[0].timestamp, 
-        end_time: '', 
-        event_ids: eventIds.join(','), 
-        user_id: userId 
+        start_time: events && events.length > 0 && events[0].timestamp, 
+        end_time: events && events.length > 0 && events[events.length - 1].timestamp, 
+        user_id: userId
       });
     }
+
+    // 存储事件
+    events.map(item => {
+      item.data = JSON.stringify(item.data);
+      item['session_id'] = res.id
+    })
+    events && events.length > 0 && await this.eventService.create(events);
+
     return {
       id: res.id
     }
   }
 
 
-  @Get('/get_user_session') 
-  async getUserSessions(@Body() body): Promise<any> {
-    const { username } = body;
-    return this.sessionService.getSession({user_id: username});
+  @Get('/get_user_sessions') 
+  async getUserSessions(@Query() query): Promise<any> {
+    const { username } = query;
+    return this.sessionService.getSessionsByUser({user_id: username});
   }
+
+  // @Get('/get_session') 
+  // async getSession(@Body() body): Promise<any> {
+  //   const { username } = body;
+  //   return this.sessionService.getSession({user_id: username})
+  // }
+
+  @Get('/get_session') 
+  async getSession(@Query() query): Promise<any> {
+    const { id } = query;
+    const events = await this.eventService.getEventBySession({session_id: id});
+    const session = events && await this.sessionService.getSession({id});
+    console.log(session,'====')
+    return { events, ...session }
+  }
+
+  @Get('/get_sessions') 
+  async getAllSession(): Promise<any> {
+    return this.sessionService.findAll();
+  }
+
 }

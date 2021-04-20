@@ -15,6 +15,8 @@ export class EventEntity extends BaseEntity {
   @Column({type: "bigint"})
   timestamp: number;
 
+  @Column({type: "bigint"})
+  session_id: number;
   // @Column()
   // user: 
 }

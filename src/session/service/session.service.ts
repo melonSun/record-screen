@@ -27,6 +27,8 @@ export class SessionService{
   async getSession(params): Promise<SessionEntity> {
     return await this.sessionRepository.findOne({...params})
   }
-
-
+  
+  async getSessionsByUser(params): Promise<SessionEntity[]> {
+    return await this.sessionRepository.find(params)
+  }
 }

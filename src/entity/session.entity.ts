@@ -37,9 +37,6 @@ export class SessionEntity extends BaseEntity {
   @Column({type: 'longtext'})
   end_time: number;
 
-  @Column({})
-  user_id: number;
-
-  @Column({type: 'longtext'})
-  event_ids: string
+  @Column({default: ''})
+  user_id: string;
 }

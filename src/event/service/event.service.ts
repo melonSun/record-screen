@@ -23,4 +23,9 @@ export class EventService{
     .values(events)
     .execute();
   }
+
+  async getEventBySession(params): Promise<EventEntity[]> {
+    console.log(params,'=====')
+    return await this.eventRepository.find(params)
+  }
 }
