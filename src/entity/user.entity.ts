@@ -6,9 +6,9 @@ export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type: 'text' })
+  @Column()
   nickname: string;
 
-  @Column({type: 'text' })
+  @Column()
   username: string;
 }
