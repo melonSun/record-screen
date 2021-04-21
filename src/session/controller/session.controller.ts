@@ -28,7 +28,7 @@ export class SessionController {
       const { id, start_time, end_time, ...defaultValues } = session;
 
       if (events && events.length > 0) {
-        if (events[events.length - 1].timestamp - start_time > 1000 * 60 * 30) {
+        if (events[events.length - 1].timestamp - start_time > 1000 * 60 * 20) { // 20分以内生成一个session
           // this.sessionService.update(id, {end_time: events[events.length - 1].timestamp});
           res = await this.sessionService.create({
             ...others, 
@@ -86,7 +86,6 @@ export class SessionController {
     const { id } = query;
     const events = await this.eventService.getEventBySession({session_id: id});
     const session = events && await this.sessionService.getSession({id});
-    console.log(session,'====')
     return { events, ...session }
   }
 
