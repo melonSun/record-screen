@@ -20,7 +20,9 @@ export class SessionController {
 
     // 处理用户信息
     let user = await this.userService.getUser(username);
-    user = !user && await this.userService.create({nickname, username});
+    if (!user) {
+      user = await this.userService.create({nickname, username});
+    }
     const userId = user.username;
 
     let res:any = {};
